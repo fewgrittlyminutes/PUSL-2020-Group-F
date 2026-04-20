@@ -1,0 +1,144 @@
+@{
+    ViewData["Title"] = "System Administration";
+    var totalUsers = (int)(ViewBag.TotalUsers ?? 0);
+    var totalProposals = (int)(ViewBag.TotalProposals ?? 0);
+    var totalMatches = (int)(ViewBag.TotalMatches ?? 0);
+    var roleCounts = ViewBag.RoleCounts as Dictionary<string, int> ?? new();
+}
+
+<div class="flex items-center gap-3 mb-8">
+  <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+    <i class="fas fa-shield-alt text-slate-600"></i>
+  </div>
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900 leading-none">System Administration</h1>
+    <p class="text-sm text-slate-500 mt-0.5">Infrastructure overview &amp; security management</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-1">
+      <i class="fas fa-users text-slate-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@totalUsers</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Total Users</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-1">
+      <i class="fas fa-file-alt text-slate-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@totalProposals</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Proposals</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center mb-1">
+      <i class="fas fa-handshake text-slate-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@totalMatches</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Matches</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <i class="fas fa-lock text-slate-500"></i>
+      <h2 class="text-base font-bold text-slate-800">RBAC — Role Distribution</h2>
+    </div>
+    <div class="space-y-3">
+      @foreach (var kv in roleCounts)
+      {
+        var barColor = kv.Key switch {
+          "Student"      => "bg-sky-400",
+          "Supervisor"   => "bg-teal-400",
+          "ModuleLeader" => "bg-indigo-400",
+          "SystemAdmin"  => "bg-slate-500",
+          _              => "bg-slate-300"
+        };
+        var pct = totalUsers > 0 ? (int)Math.Round((double)kv.Value / totalUsers * 100) : 0;
+        <div>
+          <div class="flex justify-between text-xs text-slate-600 mb-1">
+            <span class="font-semibold">@kv.Key</span>
+            <span>@kv.Value user@(kv.Value != 1 ? "s" : "")</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2">
+            <div class="@barColor h-2 rounded-full transition-all" style="width:@pct%"></div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <i class="fas fa-server text-slate-500"></i>
+      <h2 class="text-base font-bold text-slate-800">Environment Configuration</h2>
+    </div>
+    <div class="space-y-2 text-sm">
+      <div class="flex justify-between py-2 border-b border-slate-100">
+        <span class="text-slate-500">Framework</span>
+        <span class="font-semibold text-slate-800">ASP.NET Core 8 MVC</span>
+      </div>
+      <div class="flex justify-between py-2 border-b border-slate-100">
+        <span class="text-slate-500">Database</span>
+        <span class="font-semibold text-slate-800">SQLite (EF Core)</span>
+      </div>
+      <div class="flex justify-between py-2 border-b border-slate-100">
+        <span class="text-slate-500">Auth</span>
+        <span class="font-semibold text-slate-800">ASP.NET Core Identity</span>
+      </div>
+      <div class="flex justify-between py-2 border-b border-slate-100">
+        <span class="text-slate-500">Environment</span>
+        <span class="font-semibold text-slate-800">@Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")</span>
+      </div>
+      <div class="flex justify-between py-2">
+        <span class="text-slate-500">Server Time</span>
+        <span class="font-semibold text-slate-800">@DateTime.Now.ToString("dd MMM yyyy HH:mm")</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <i class="fas fa-clipboard-check text-slate-500"></i>
+      <h2 class="text-base font-bold text-slate-800">Security Configuration</h2>
+    </div>
+    <ul class="space-y-2 text-sm">
+      <li class="flex items-center gap-2 text-emerald-700">
+        <i class="fas fa-check-circle text-emerald-500"></i>Role-Based Access Control (RBAC) enabled
+      </li>
+      <li class="flex items-center gap-2 text-emerald-700">
+        <i class="fas fa-check-circle text-emerald-500"></i>Anti-forgery tokens on all POST actions
+      </li>
+      <li class="flex items-center gap-2 text-emerald-700">
+        <i class="fas fa-check-circle text-emerald-500"></i>Identity password hashing (ASP.NET Core Identity)
+      </li>
+      <li class="flex items-center gap-2 text-emerald-700">
+        <i class="fas fa-check-circle text-emerald-500"></i>EF Core parameterised queries (SQL injection prevention)
+      </li>
+      <li class="flex items-center gap-2 text-emerald-700">
+        <i class="fas fa-check-circle text-emerald-500"></i>Student identity hidden from supervisors (Blind Match)
+      </li>
+    </ul>
+  </div>
+
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+    <div class="flex items-center gap-2 mb-4">
+      <i class="fas fa-database text-slate-500"></i>
+      <h2 class="text-base font-bold text-slate-800">Database Versioning</h2>
+    </div>
+    <p class="text-sm text-slate-500 mb-3">Managed via EF Core Migrations. Run from the CLI:</p>
+    <div class="space-y-2">
+      <div class="bg-slate-900 rounded-lg px-4 py-2 text-xs font-mono text-emerald-400">
+        dotnet ef database update
+      </div>
+      <div class="bg-slate-900 rounded-lg px-4 py-2 text-xs font-mono text-emerald-400">
+        dotnet ef migrations add &lt;Name&gt;
+      </div>
+    </div>
+    <p class="text-xs text-slate-400 mt-3">Latest migration applied automatically on startup.</p>
+  </div>
+
+</div>
