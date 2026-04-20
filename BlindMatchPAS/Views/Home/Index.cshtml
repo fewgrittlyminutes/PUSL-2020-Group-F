@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "Home";
+    ViewData["FullWidth"] = true;
+}
+
+<div>
+
+  @* Hero Section *@
+  <section class="relative overflow-hidden bg-gradient-to-br from-[#1A2E4A] via-[#1e3a5f] to-[#1A2E4A] text-white py-24 px-4">
+    <div class="absolute inset-0 opacity-10"
+         style="background-image:repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.3) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.3) 40px)">
+    </div>
+    <div class="relative max-w-3xl mx-auto text-center">
+      <div class="w-20 h-20 rounded-full bg-white/10 ring-2 ring-[#00A8A8] flex items-center justify-center mx-auto mb-6">
+        <i class="fas fa-eye-slash text-[#00A8A8] text-4xl"></i>
+      </div>
+      <h1 class="text-5xl sm:text-6xl font-extrabold tracking-tight mb-3">BlindMatch PAS</h1>
+      <p class="text-[#00A8A8] font-semibold tracking-widest uppercase text-sm mb-6">Project Approval System</p>
+      <div class="w-16 h-0.5 bg-[#00A8A8] mx-auto mb-8"></div>
+      <p class="text-gray-300 text-lg leading-relaxed mb-10 max-w-2xl mx-auto">
+        A bias-free platform where supervisors review project proposals <strong class="text-white">anonymously</strong>,
+        selecting matches based purely on technical merit and research-area alignment —
+        <span class="text-[#00A8A8]">no names, no bias, no favouritism.</span>
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a asp-area="Identity" asp-page="/Account/Login"
+           class="btn bg-[#00A8A8] hover:bg-[#007A7A] text-white border-none btn-lg gap-2 shadow-lg">
+          <i class="fas fa-sign-in-alt"></i>Login
+        </a>
+      </div>
+    </div>
+  </section>
+
+  @* How It Works *@
+  <section class="py-20 px-4 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-14">
+        <span class="inline-flex items-center px-3 py-1 rounded-full bg-teal-50 text-teal-600 text-xs font-semibold border border-teal-200 uppercase tracking-wider mb-4">The Process</span>
+        <h2 class="text-3xl font-bold text-slate-900 mb-2">How It Works</h2>
+        <p class="text-slate-500">Three simple steps to a fair, merit-based match</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="relative bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all hover:-translate-y-1">
+          <div class="absolute top-4 right-4 text-7xl font-extrabold text-slate-100 leading-none select-none">01</div>
+          <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center mb-4">
+            <i class="fas fa-file-alt text-teal-400 text-lg"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 mb-2">Submit Proposal</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">Students submit project title, abstract, tech stack and research area.</p>
+        </div>
+        <div class="relative bg-teal-500 rounded-2xl border border-teal-400 p-6 hover:shadow-lg transition-all hover:-translate-y-1">
+          <div class="absolute top-4 right-4 text-7xl font-extrabold text-teal-400/30 leading-none select-none">02</div>
+          <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
+            <i class="fas fa-user-secret text-white text-lg"></i>
+          </div>
+          <h3 class="font-bold text-white mb-2">Anonymous Review</h3>
+          <p class="text-teal-100 text-sm leading-relaxed">Supervisors browse proposals with all student identity hidden.</p>
+        </div>
+        <div class="relative bg-white rounded-2xl border border-slate-200 p-6 hover:shadow-lg transition-all hover:-translate-y-1">
+          <div class="absolute top-4 right-4 text-7xl font-extrabold text-slate-100 leading-none select-none">03</div>
+          <div class="w-12 h-12 rounded-xl bg-slate-900 flex items-center justify-center mb-4">
+            <i class="fas fa-handshake text-teal-400 text-lg"></i>
+          </div>
+          <h3 class="font-bold text-slate-900 mb-2">Confirm Match</h3>
+          <p class="text-slate-500 text-sm leading-relaxed">Once a supervisor confirms, both identities are revealed to each other.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  @* Trust Banner *@
+  <section class="bg-slate-900 py-12 px-4">
+    <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
+          <i class="fas fa-balance-scale text-teal-400"></i>
+        </div>
+        <span class="text-sm font-medium text-slate-300">Unbiased Selection</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
+          <i class="fas fa-shield-alt text-teal-400"></i>
+        </div>
+        <span class="text-sm font-medium text-slate-300">Identity Protected</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
+          <i class="fas fa-graduation-cap text-teal-400"></i>
+        </div>
+        <span class="text-sm font-medium text-slate-300">Merit-Based Matches</span>
+      </div>
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-10 h-10 rounded-xl bg-teal-500/20 flex items-center justify-center">
+          <i class="fas fa-university text-teal-400"></i>
+        </div>
+        <span class="text-sm font-medium text-slate-300">Academic Integrity</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+

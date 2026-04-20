@@ -1,0 +1,25 @@
+## Ignore VS/Build artifacts
+bin/
+obj/
+*.user
+.vs/
+.vscode/
+*.suo
+
+## Runtime files
+*.db
+*.db-shm
+*.db-wal
+
+## Secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+## NuGet
+packages/
+*.nupkg
+
+## OS
+.DS_Store
+Thumbs.db

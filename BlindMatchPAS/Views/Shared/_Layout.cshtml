@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="BlindMatch PAS — Fair, merit-based supervisor matching for academic projects." />
+    <title>@ViewData["Title"] – BlindMatch PAS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = { corePlugins: { preflight: false }, theme: { extend: { fontFamily: { sans: ["'Inter'", 'system-ui', '-apple-system', 'BlinkMacSystemFont', "'Segoe UI'", 'sans-serif'] }, colors: { primary: '#0F172A', accent: '#0D9488' } } } }
+    </script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="bg-slate-50 min-h-screen font-sans flex flex-col" data-theme="light" style="font-family: 'Inter', system-ui, sans-serif;">
+    <a class="sr-only focus:not-sr-only absolute top-2 left-2 z-50 bg-accent text-white px-3 py-1 rounded" href="#main-content">Skip to main content</a>
+
+    <div class="navbar bg-white border-b-2 border-teal-500 shadow-sm px-4 md:px-8 sticky top-0 z-40" role="banner" x-data="{ open: false }">
+      <div class="navbar-start">
+        <a asp-controller="Home" asp-action="Index" class="flex items-center gap-2 text-slate-900 font-bold text-lg hover:text-teal-600 transition-colors">
+          <i class="fas fa-eye-slash text-teal-500"></i>
+          <span class="hidden sm:inline">BlindMatch PAS</span>
+        </a>
+      </div>
+      <div class="navbar-center hidden lg:flex">
+        <ul class="menu menu-horizontal px-1 gap-1">
+          @if (User.IsInRole("Student"))
+          {
+            <li><a asp-controller="Student" asp-action="Dashboard" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-folder-open text-teal-500"></i>My Proposals</a></li>
+            <li><a asp-controller="Student" asp-action="Submit" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-plus-circle text-teal-500"></i>New Proposal</a></li>
+          }
+          @if (User.IsInRole("Supervisor"))
+          {
+            <li><a asp-controller="Supervisor" asp-action="Dashboard" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-th-large text-teal-500"></i>Dashboard</a></li>
+            <li><a asp-controller="Supervisor" asp-action="Browse" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-search text-teal-500"></i>Browse</a></li>
+            <li><a asp-controller="Supervisor" asp-action="ManageExpertise" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-tags text-teal-500"></i>Expertise</a></li>
+          }
+          @if (User.IsInRole("ModuleLeader"))
+          {
+            <li><a asp-controller="ModuleLeader" asp-action="Dashboard" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-chart-bar text-indigo-500"></i>Allocations</a></li>
+            <li><a asp-controller="ModuleLeader" asp-action="ResearchAreas" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-flask text-indigo-500"></i>Research Areas</a></li>
+            <li><a asp-controller="ModuleLeader" asp-action="Users" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-users text-indigo-500"></i>Users</a></li>
+          }
+          @if (User.IsInRole("SystemAdmin"))
+          {
+            <li><a asp-controller="Admin" asp-action="Dashboard" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-shield-alt text-slate-500"></i>System Admin</a></li>
+            <li><a asp-controller="Admin" asp-action="Users" class="text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg gap-2 font-semibold text-sm">
+              <i class="fas fa-users text-slate-500"></i>Users</a></li>
+          }
+        </ul>
+      </div>
+      <div class="navbar-end gap-2">
+        <partial name="_LoginPartial" />
+        <div class="lg:hidden">
+          <button @@click="open = !open" class="btn btn-ghost btn-sm text-slate-700">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </div>
+      <div x-show="open" @@click.away="open = false"
+           class="absolute top-full left-0 right-0 bg-white border-t border-slate-200 lg:hidden z-50 py-2 px-4 shadow-lg"
+           x-transition>
+        <ul class="menu w-full">
+          @if (User.IsInRole("Student"))
+          {
+            <li><a asp-controller="Student" asp-action="Dashboard" class="text-slate-700 font-medium"><i class="fas fa-folder-open text-teal-500"></i>My Proposals</a></li>
+            <li><a asp-controller="Student" asp-action="Submit" class="text-slate-700 font-medium"><i class="fas fa-plus-circle text-teal-500"></i>New Proposal</a></li>
+          }
+          @if (User.IsInRole("Supervisor"))
+          {
+            <li><a asp-controller="Supervisor" asp-action="Dashboard" class="text-slate-700 font-medium"><i class="fas fa-th-large text-teal-500"></i>Dashboard</a></li>
+            <li><a asp-controller="Supervisor" asp-action="Browse" class="text-slate-700 font-medium"><i class="fas fa-search text-teal-500"></i>Browse</a></li>
+            <li><a asp-controller="Supervisor" asp-action="ManageExpertise" class="text-slate-700 font-medium"><i class="fas fa-tags text-teal-500"></i>Expertise</a></li>
+          }
+          @if (User.IsInRole("ModuleLeader"))
+          {
+            <li><a asp-controller="ModuleLeader" asp-action="Dashboard" class="text-slate-700 font-medium"><i class="fas fa-chart-bar text-indigo-500"></i>Allocations</a></li>
+            <li><a asp-controller="ModuleLeader" asp-action="ResearchAreas" class="text-slate-700 font-medium"><i class="fas fa-flask text-indigo-500"></i>Research Areas</a></li>
+            <li><a asp-controller="ModuleLeader" asp-action="Users" class="text-slate-700 font-medium"><i class="fas fa-users text-indigo-500"></i>Users</a></li>
+          }
+          @if (User.IsInRole("SystemAdmin"))
+          {
+            <li><a asp-controller="Admin" asp-action="Dashboard" class="text-slate-700 font-medium"><i class="fas fa-shield-alt text-slate-500"></i>System Admin</a></li>
+            <li><a asp-controller="Admin" asp-action="Users" class="text-slate-700 font-medium"><i class="fas fa-users text-slate-500"></i>Users</a></li>
+          }
+        </ul>
+      </div>
+    </div>
+
+    @if (ViewData["FullWidth"] is true)
+    {
+        <main id="main-content" role="main">
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success shadow m-4">
+                    <i class="fas fa-check-circle"></i><span>@TempData["Success"]</span>
+                </div>
+            }
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-error shadow m-4">
+                    <i class="fas fa-exclamation-circle"></i><span>@TempData["Error"]</span>
+                </div>
+            }
+            @RenderBody()
+        </main>
+    }
+    else
+    {
+    <div class="container mx-auto px-4 py-6 flex-1" id="main-content-wrap">
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success shadow mb-4">
+                <i class="fas fa-check-circle"></i><span>@TempData["Success"]</span>
+            </div>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error shadow mb-4">
+                <i class="fas fa-exclamation-circle"></i><span>@TempData["Error"]</span>
+            </div>
+        }
+        <main id="main-content" role="main">
+            @RenderBody()
+        </main>
+    </div>
+    }
+
+    <footer class="footer footer-center bg-slate-900 text-slate-400 p-5" role="contentinfo">
+        <aside class="flex flex-col items-center gap-1">
+            <div class="flex items-center gap-2 text-white font-semibold text-sm">
+                <i class="fas fa-eye-slash text-teal-400"></i>BlindMatch PAS
+            </div>
+            <p class="text-xs">&copy; @DateTime.Now.Year BlindMatch Project Approval System &mdash; PUSL2020</p>
+        </aside>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
