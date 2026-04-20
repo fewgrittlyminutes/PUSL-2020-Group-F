@@ -1,0 +1,191 @@
+@using BlindMatchPAS.ViewModels.ModuleLeader
+@model ModuleLeaderDashboardViewModel
+@{
+    ViewData["Title"] = "Module Leader Dashboard";
+}
+
+<div class="flex items-center gap-3 mb-8">
+  <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+    <i class="fas fa-graduation-cap text-indigo-600"></i>
+  </div>
+  <div>
+    <h1 class="text-2xl font-bold text-slate-900 leading-none">Module Leader Dashboard</h1>
+    <p class="text-sm text-slate-500 mt-0.5">Allocation oversight &amp; system coordination</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-10">
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center mb-1">
+      <i class="fas fa-users text-indigo-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@Model.TotalUsers</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Users</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center mb-1">
+      <i class="fas fa-file-alt text-sky-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@Model.TotalProposals</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Proposals</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center mb-1">
+      <i class="fas fa-flask text-teal-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@Model.ActiveResearchAreas</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Areas</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-1">
+      <i class="fas fa-handshake text-emerald-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@Model.ConfirmedMatches.Count()</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Confirmed</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-1">
+      <i class="fas fa-hourglass-half text-amber-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@Model.PendingMatches.Count()</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Reviewing</p>
+  </div>
+  <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col items-center gap-1 hover:shadow-md transition-shadow">
+    <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center mb-1">
+      <i class="fas fa-exclamation-circle text-rose-500 text-lg"></i>
+    </div>
+    <p class="text-3xl font-extrabold text-slate-900">@Model.UnmatchedProposals.Count()</p>
+    <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Unmatched</p>
+  </div>
+</div>
+
+<div class="flex items-center gap-2 mb-3">
+  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
+    <i class="fas fa-handshake"></i>Confirmed Matches
+  </span>
+</div>
+@if (!Model.ConfirmedMatches.Any())
+{
+  <p class="text-gray-400 text-sm mb-6">No confirmed matches yet.</p>
+}
+else
+{
+  <div class="overflow-x-auto mb-8 shadow-sm rounded-xl">
+    <table class="table table-zebra bg-white">
+      <thead>
+        <tr>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Project</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Student</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Supervisor</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Research Area</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Confirmed</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var m in Model.ConfirmedMatches)
+        {
+          <tr>
+            <td class="font-medium">@m.ProposalTitle</td>
+            <td>@m.StudentName<br /><span class="text-xs text-gray-400">@m.StudentEmail</span></td>
+            <td>@m.SupervisorName<br /><span class="text-xs text-gray-400">@m.SupervisorEmail</span></td>
+            <td><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200">@m.ResearchArea</span></td>
+            <td class="text-sm text-slate-500">@m.ConfirmedAt?.ToString("dd MMM yyyy")</td>
+            <td>
+              <a asp-controller="ModuleLeader" asp-action="Reassign" asp-route-proposalId="@m.ProposalId"
+                 class="btn btn-xs btn-outline border-warning text-warning hover:bg-warning hover:text-white">
+                <i class="fas fa-exchange-alt"></i>Reassign
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<div class="flex items-center gap-2 mb-3 mt-8">
+  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold border border-amber-200">
+    <i class="fas fa-hourglass-half"></i>Under Review
+  </span>
+</div>
+@if (!Model.PendingMatches.Any())
+{
+  <p class="text-gray-400 text-sm mb-6">No proposals under review.</p>
+}
+else
+{
+  <div class="overflow-x-auto mb-8 shadow-sm rounded-xl">
+    <table class="table table-zebra bg-white">
+      <thead>
+        <tr>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Project</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Student</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Supervisor (Interested)</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Research Area</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var m in Model.PendingMatches)
+        {
+          <tr>
+            <td class="font-medium">@m.ProposalTitle</td>
+            <td>@m.StudentName</td>
+            <td>@m.SupervisorName</td>
+            <td><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">@m.ResearchArea</span></td>
+            <td>
+              <a asp-controller="ModuleLeader" asp-action="Reassign" asp-route-proposalId="@m.ProposalId"
+                 class="btn btn-xs btn-outline border-warning text-warning hover:bg-warning hover:text-white">
+                <i class="fas fa-exchange-alt"></i>Reassign
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}
+
+<div class="flex items-center gap-2 mb-3 mt-8">
+  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-semibold border border-rose-200">
+    <i class="fas fa-exclamation-circle"></i>Unmatched Proposals
+  </span>
+</div>
+@if (!Model.UnmatchedProposals.Any())
+{
+  <p class="text-success text-sm flex items-center gap-1"><i class="fas fa-check"></i>All proposals have been matched!</p>
+}
+else
+{
+  <div class="overflow-x-auto shadow-sm rounded-xl">
+    <table class="table table-zebra bg-white">
+      <thead>
+        <tr>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Project</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Student</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Research Area</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var p in Model.UnmatchedProposals)
+        {
+          <tr>
+            <td class="font-medium">@p.Title</td>
+            <td>@p.StudentName</td>
+            <td><span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">@p.ResearchArea</span></td>
+            <td><span class="badge badge-warning badge-outline text-xs">@p.Status</span></td>
+            <td>
+              <a asp-controller="ModuleLeader" asp-action="Reassign" asp-route-proposalId="@p.ProposalId"
+                 class="btn btn-xs btn-outline border-indigo-500 text-indigo-600 hover:bg-indigo-500 hover:text-white">
+                <i class="fas fa-user-plus"></i>Assign
+              </a>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

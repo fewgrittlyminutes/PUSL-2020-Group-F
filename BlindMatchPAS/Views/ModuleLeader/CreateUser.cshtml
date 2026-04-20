@@ -1,0 +1,101 @@
+@using BlindMatchPAS.ViewModels.Admin
+@model CreateUserViewModel
+@{
+    ViewData["Title"] = "Create User";
+}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-2xl">
+    <div class="card bg-white shadow-md border-0">
+      <div class="card-body p-0">
+        <div class="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-indigo-900 px-6 py-4 rounded-t-2xl" style="color:#ffffff">
+          <i class="fas fa-user-plus text-indigo-300 text-lg"></i>
+          <h2 class="text-lg font-bold">Create User Account</h2>
+        </div>
+        <div class="p-6">
+          <form asp-controller="ModuleLeader" asp-action="CreateUser" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-error text-sm py-2"></div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label asp-for="FullName" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Full Name</span></label>
+                <input asp-for="FullName" class="input input-bordered w-full focus:border-indigo-400 focus:outline-none" />
+                <span asp-validation-for="FullName" class="text-error text-xs mt-1 block"></span>
+              </div>
+              <div class="form-control">
+                <label asp-for="Email" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Email</span></label>
+                <input asp-for="Email" class="input input-bordered w-full focus:border-indigo-400 focus:outline-none" type="email" autocomplete="off" />
+                <span asp-validation-for="Email" class="text-error text-xs mt-1 block"></span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="form-control">
+                <label asp-for="Role" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Role</span></label>
+                <select asp-for="Role" asp-items="Model.Roles"
+                        class="select select-bordered w-full focus:border-indigo-400 focus:outline-none">
+                  <option value="">-- Select role --</option>
+                </select>
+                <span asp-validation-for="Role" class="text-error text-xs mt-1 block"></span>
+              </div>
+              <div class="form-control">
+                <label asp-for="InstitutionId" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Institution ID</span></label>
+                <input asp-for="InstitutionId" class="input input-bordered w-full focus:border-indigo-400 focus:outline-none"
+                       placeholder="e.g. ST2024001" />
+              </div>
+            </div>
+
+            <div class="form-control">
+              <label asp-for="Department" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Department</span></label>
+              <select asp-for="Department" class="select select-bordered w-full focus:border-indigo-400 focus:outline-none">
+                <option value="">-- Select department --</option>
+                @foreach (var dept in (ViewBag.Departments as List<string> ?? new List<string>()))
+                {
+                  <option value="@dept" selected="@(Model.Department == dept)">@dept</option>
+                }
+              </select>
+              <span asp-validation-for="Department" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <div class="form-control">
+              <label asp-for="Password" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Password</span></label>
+              <div class="relative">
+                <input asp-for="Password" id="ml-password" class="input input-bordered w-full focus:border-indigo-400 focus:outline-none pr-12" type="password" autocomplete="new-password" />
+                <button type="button" onclick="togglePassword('ml-password','ml-eye')" class="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-indigo-600" tabindex="-1">
+                  <i id="ml-eye" class="fas fa-eye"></i>
+                </button>
+              </div>
+              <span asp-validation-for="Password" class="text-error text-xs mt-1 block"></span>
+              <p class="text-xs text-gray-400 mt-1">Min 8 characters, including uppercase, lowercase, digit and special character.</p>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button type="submit" class="btn bg-indigo-500 hover:bg-indigo-600 text-white border-none">
+                <i class="fas fa-user-check"></i>Create Account
+              </button>
+              <a asp-controller="ModuleLeader" asp-action="Users" class="btn btn-outline text-gray-600">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  <partial name="_ValidationScriptsPartial" />
+  <script>
+    function togglePassword(inputId, iconId) {
+      var inp = document.getElementById(inputId);
+      var ico = document.getElementById(iconId);
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        ico.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        inp.type = 'password';
+        ico.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+  </script>
+}

@@ -1,0 +1,133 @@
+@using Microsoft.AspNetCore.Identity
+@model IEnumerable<BlindMatchPAS.Models.ApplicationUser>
+@{
+    ViewData["Title"] = "User Management";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, IList<string>> ?? new();
+    var currentRole = ViewBag.CurrentRole as string ?? "";
+    var currentSearch = ViewBag.CurrentSearch as string ?? "";
+    var roleOptions = new[] { "Student", "Supervisor" };
+}
+
+<div x-data="{ showModal: false, deleteId: '', deleteName: '' }">
+
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+        <i class="fas fa-users text-indigo-600"></i>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900 leading-none">User Management</h1>
+        <p class="text-sm text-slate-500 mt-0.5">@Model.Count() registered users</p>
+      </div>
+    </div>
+    <a asp-controller="ModuleLeader" asp-action="CreateUser"
+       class="btn bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-sm gap-2">
+      <i class="fas fa-user-plus"></i>Create User
+    </a>
+  </div>
+
+  <form method="get" asp-controller="ModuleLeader" asp-action="Users" class="flex flex-wrap gap-3 mb-5">
+    <div class="relative flex-1 min-w-[200px]">
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+      <input type="text" name="search" value="@currentSearch" placeholder="Search name or email…"
+             class="input input-bordered w-full pl-9 text-sm text-slate-800 bg-white focus:border-indigo-400 focus:outline-none" />
+    </div>
+    <select name="role" class="select select-bordered text-sm text-slate-700 bg-white focus:border-indigo-400 focus:outline-none">
+      <option value="">All Roles</option>
+      @foreach (var r in roleOptions)
+      {
+        <option value="@r" selected="@(currentRole == r ? "selected" : null)">@r</option>
+      }
+    </select>
+    <button type="submit" class="btn bg-indigo-500 hover:bg-indigo-600 text-white border-none gap-2">
+      <i class="fas fa-filter"></i>Filter
+    </button>
+    @if (!string.IsNullOrEmpty(currentRole) || !string.IsNullOrEmpty(currentSearch))
+    {
+      <a asp-controller="ModuleLeader" asp-action="Users" class="btn btn-ghost text-slate-500 gap-2">
+        <i class="fas fa-times"></i>Clear
+      </a>
+    }
+  </form>
+
+  <div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <table class="table table-zebra bg-white">
+      <thead>
+        <tr>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Full Name</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Email</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Role(s)</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Department</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Institution ID</th>
+          <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Joined</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (var user in Model)
+        {
+          var roles = userRoles.GetValueOrDefault(user.Id, new List<string>());
+          var isProtected = roles.Contains("SystemAdmin") || roles.Contains("ModuleLeader");
+          <tr>
+            <td>
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs font-bold">
+                  @(user.FullName?.Substring(0, 1).ToUpper() ?? "?")
+                </div>
+                <span class="font-semibold text-slate-900">@user.FullName</span>
+              </div>
+            </td>
+            <td class="text-slate-600 text-sm">@user.Email</td>
+            <td>
+              @foreach (var role in roles)
+              {
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold mr-1
+                  @(role == "Student" ? "bg-sky-50 text-sky-700 border border-sky-200" :
+                    role == "Supervisor" ? "bg-teal-50 text-teal-700 border border-teal-200" :
+                    role == "ModuleLeader" ? "bg-indigo-50 text-indigo-700 border border-indigo-200" :
+                    "bg-slate-100 text-slate-600 border border-slate-200")">
+                  @role
+                </span>
+              }
+            </td>
+            <td class="text-sm text-slate-500">@(user.Department ?? "—")</td>
+            <td class="text-sm text-slate-500">@(user.StudentId ?? user.FacultyId ?? "—")</td>
+            <td class="text-sm text-slate-400">@user.CreatedAt.ToString("dd MMM yyyy")</td>
+            <td>
+              @if (!isProtected)
+              {
+                <button type="button"
+                        class="btn btn-xs btn-outline border-rose-400 text-rose-500 hover:bg-rose-500 hover:text-white"
+                        @@click="showModal = true; deleteId = '@user.Id'; deleteName = '@(user.FullName?.Replace("'","\\'")??"")' ">
+                  <i class="fas fa-trash"></i>
+                </button>
+              }
+              else
+              {
+                <span class="text-xs text-slate-300 italic">Protected</span>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div x-show="showModal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" x-transition>
+    <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm mx-4">
+      <h3 class="text-lg font-bold text-slate-900 mb-2">Delete User</h3>
+      <p class="text-sm text-slate-600 mb-5">Delete <span class="font-semibold" x-text="deleteName"></span>? This will also remove their proposals and matches.</p>
+      <div class="flex gap-3 justify-end">
+        <button type="button" class="btn btn-ghost text-slate-500" @@click="showModal = false">Cancel</button>
+        <form asp-controller="ModuleLeader" asp-action="DeleteUser" method="post">
+          @Html.AntiForgeryToken()
+          <input type="hidden" name="id" x-bind:value="deleteId" />
+          <button type="submit" class="btn bg-rose-500 hover:bg-rose-600 text-white border-none">
+            <i class="fas fa-trash"></i>Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</div>

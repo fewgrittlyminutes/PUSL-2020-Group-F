@@ -1,0 +1,57 @@
+@model IEnumerable<BlindMatchPAS.Models.ResearchArea>
+@{
+    ViewData["Title"] = "Research Areas";
+}
+
+<div class="flex items-center justify-between mb-8">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center">
+      <i class="fas fa-flask text-indigo-600"></i>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 leading-none">Research Areas</h1>
+      <p class="text-sm text-slate-500 mt-0.5">Manage available project research domains</p>
+    </div>
+  </div>
+  <a asp-controller="ModuleLeader" asp-action="CreateResearchArea"
+     class="btn bg-indigo-500 hover:bg-indigo-600 text-white border-none shadow-sm gap-2">
+    <i class="fas fa-plus-circle"></i>Add Area
+  </a>
+</div>
+
+<div class="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+  <table class="table table-zebra bg-white">
+    <thead>
+      <tr>
+        <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Name</th>
+        <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Description</th>
+        <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Status</th>
+        <th class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      @foreach (var area in Model)
+      {
+        <tr class="@(!area.IsActive ? "opacity-60" : "")">
+          <td class="font-semibold">@area.Name</td>
+          <td class="text-sm text-gray-500">@(area.Description ?? "—")</td>
+          <td>
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold
+              @(area.IsActive ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-slate-100 text-slate-500 border border-slate-200")">
+              @(area.IsActive ? "Active" : "Inactive")
+            </span>
+          </td>
+          <td>
+            <form asp-controller="ModuleLeader" asp-action="ToggleResearchArea" asp-route-id="@area.Id" method="post">
+              @Html.AntiForgeryToken()
+              <button type="submit"
+                      class="btn btn-xs @(area.IsActive ? "btn-outline border-warning text-warning hover:bg-warning hover:text-white" : "btn-outline border-success text-success hover:bg-success hover:text-white")">
+                @(area.IsActive ? "Deactivate" : "Activate")
+              </button>
+            </form>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

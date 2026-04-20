@@ -1,0 +1,45 @@
+@model BlindMatchPAS.Models.ResearchArea
+@{
+    ViewData["Title"] = "Create Research Area";
+}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-lg">
+    <div class="card bg-white shadow-md border-0">
+      <div class="card-body p-0">
+        <div class="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-indigo-900 px-6 py-4 rounded-t-2xl" style="color:#ffffff">
+          <i class="fas fa-flask text-indigo-300 text-lg"></i>
+          <h2 class="text-lg font-bold">New Research Area</h2>
+        </div>
+        <div class="p-6">
+          <form asp-controller="ModuleLeader" asp-action="CreateResearchArea" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="alert alert-error text-sm py-2"></div>
+
+            <div class="form-control">
+              <label asp-for="Name" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Name</span></label>
+              <input asp-for="Name" class="input input-bordered w-full focus:border-indigo-400 focus:outline-none"
+                     placeholder="e.g. Quantum Computing" />
+              <span asp-validation-for="Name" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <div class="form-control">
+              <label asp-for="Description" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Description</span></label>
+              <textarea asp-for="Description" class="textarea textarea-bordered w-full focus:border-indigo-400 focus:outline-none"
+                        rows="3" placeholder="Brief description…"></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button type="submit" class="btn bg-indigo-500 hover:bg-indigo-600 text-white border-none">
+                <i class="fas fa-save"></i>Create
+              </button>
+              <a asp-controller="ModuleLeader" asp-action="ResearchAreas" class="btn btn-outline text-gray-600">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,55 @@
+@using BlindMatchPAS.ViewModels.Admin
+@model ReassignProposalViewModel
+@{
+    ViewData["Title"] = "Reassign Proposal";
+}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-lg">
+    <div class="card bg-white shadow-md border-0">
+      <div class="card-body p-0">
+        <div class="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-indigo-900 px-6 py-4 rounded-t-2xl" style="color:#ffffff">
+          <i class="fas fa-exchange-alt text-yellow-300 text-lg"></i>
+          <h2 class="text-lg font-bold">Reassign / Assign Proposal</h2>
+        </div>
+        <div class="p-6">
+          <div class="mb-4 p-4 bg-base-200 rounded-xl">
+            <p class="text-sm text-gray-500 mb-1">Project</p>
+            <p class="font-bold text-[#1A2E4A]">@Model.ProposalTitle</p>
+          </div>
+          <div class="mb-5">
+            <p class="text-sm text-gray-500 mb-1">Current Supervisor</p>
+            <p class="font-medium text-gray-700">@(Model.CurrentSupervisorName ?? "—")</p>
+          </div>
+
+          <form asp-controller="ModuleLeader" asp-action="Reassign" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ProposalId" />
+            <input type="hidden" asp-for="ProposalTitle" />
+            <input type="hidden" asp-for="CurrentSupervisorName" />
+
+            <div class="form-control">
+              <label asp-for="NewSupervisorId" class="label"><span class="label-text font-semibold text-[#1A2E4A]">New Supervisor</span></label>
+              <select asp-for="NewSupervisorId" asp-items="Model.Supervisors"
+                      class="select select-bordered w-full focus:border-indigo-400 focus:outline-none">
+                <option value="">-- Select supervisor --</option>
+              </select>
+              <span asp-validation-for="NewSupervisorId" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button type="submit"
+                      class="btn bg-warning hover:bg-yellow-500 text-white border-none"
+                      onclick="return confirm('This will override the current match. Continue?')">
+                <i class="fas fa-check"></i>Confirm Reassignment
+              </button>
+              <a asp-controller="ModuleLeader" asp-action="Dashboard" class="btn btn-outline text-gray-600">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
