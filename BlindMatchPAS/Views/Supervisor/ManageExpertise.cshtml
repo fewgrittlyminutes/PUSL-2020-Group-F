@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "Manage Expertise";
+    var allAreas = ViewBag.AllAreas as List<BlindMatchPAS.Models.ResearchArea> ?? new();
+    var selectedIds = ViewBag.SelectedIds as List<int> ?? new();
+}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-2xl">
+    <div class="card bg-white shadow-md border-0">
+      <div class="card-body p-0">
+        <div class="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-teal-900 px-6 py-4 rounded-t-2xl" style="color:#ffffff">
+          <i class="fas fa-tags text-[#00A8A8] text-lg"></i>
+          <h2 class="text-lg font-bold">Manage Research Expertise</h2>
+        </div>
+        <div class="p-6">
+          <p class="text-sm text-gray-500 mb-6">
+            Select the research areas that match your expertise. Only proposals in these areas will appear in your Browse feed.
+          </p>
+          <form asp-action="ManageExpertise" method="post">
+            @Html.AntiForgeryToken()
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              @foreach (var area in allAreas)
+              {
+                var isSelected = selectedIds.Contains(area.Id);
+                <label class="flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-colors @(isSelected ? "border-[#00A8A8] bg-[#00A8A8]/5" : "border-base-200 hover:border-[#00A8A8]/50")">
+                  <input type="checkbox" name="selectedAreaIds" value="@area.Id"
+                         class="checkbox checkbox-sm mt-0.5 [--chkbg:#00A8A8]"
+                         @(isSelected ? "checked" : "") />
+                  <div>
+                    <span class="font-semibold text-[#1A2E4A] text-sm">@area.Name</span>
+                    @if (area.Description != null)
+                    {
+                      <p class="text-xs text-gray-400 mt-0.5">@area.Description</p>
+                    }
+                  </div>
+                </label>
+              }
+            </div>
+            <button type="submit" class="btn bg-[#00A8A8] hover:bg-[#007A7A] text-white border-none">
+              <i class="fas fa-save"></i>Save Preferences
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+

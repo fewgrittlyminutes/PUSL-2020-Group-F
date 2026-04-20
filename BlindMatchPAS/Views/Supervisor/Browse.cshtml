@@ -1,0 +1,129 @@
+@model IEnumerable<AnonymousProposalViewModel>
+@{
+    ViewData["Title"] = "Browse Proposals (Anonymous)";
+    var areas = ViewBag.ResearchAreas as List<string> ?? new();
+}
+
+<div class="flex flex-wrap items-start justify-between gap-4 mb-6">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center">
+      <i class="fas fa-user-secret text-teal-600"></i>
+    </div>
+    <div>
+      <h1 class="text-2xl font-bold text-slate-900 leading-none">Browse Proposals</h1>
+      <p class="text-sm text-slate-500 mt-0.5">All student identities are hidden until you confirm a match</p>
+    </div>
+  </div>
+  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium">
+    <i class="fas fa-eye-slash"></i>Anonymous mode active
+  </div>
+</div>
+
+@* Search + Filter bar *@
+<div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-6"
+     x-data="{
+       search: '',
+       area: 'all',
+       get filtered() {
+         return [...document.querySelectorAll('[data-proposal]')].filter(el => {
+           const title = el.dataset.title.toLowerCase();
+           const stack = el.dataset.stack.toLowerCase();
+           const elArea = el.dataset.area;
+           const matchSearch = !this.search || title.includes(this.search.toLowerCase()) || stack.includes(this.search.toLowerCase());
+           const matchArea  = this.area === 'all' || elArea === this.area;
+           return matchSearch && matchArea;
+         });
+       }
+     }"
+     x-init="
+       $watch('search', () => filterCards());
+       $watch('area',   () => filterCards());
+       function filterCards() {
+         document.querySelectorAll('[data-proposal]').forEach(el => {
+           const title   = el.dataset.title.toLowerCase();
+           const stack   = el.dataset.stack.toLowerCase();
+           const elArea  = el.dataset.area;
+           const matchS  = !$data.search || title.includes($data.search.toLowerCase()) || stack.includes($data.search.toLowerCase());
+           const matchA  = $data.area === 'all' || elArea === $data.area;
+           el.style.display = (matchS && matchA) ? '' : 'none';
+         });
+         const visible = document.querySelectorAll('[data-proposal]:not([style*=none])').length;
+         document.getElementById('no-results').style.display = visible === 0 ? '' : 'none';
+         document.getElementById('result-count').textContent = visible;
+       }
+     ">
+  <div class="flex flex-wrap gap-3 items-center">
+    <div class="relative flex-1 min-w-[220px]">
+      <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none"></i>
+      <input type="text" x-model="search" placeholder="Search by title or tech stack…"
+             style="color:#1e293b; background:#fff; padding-left:2.25rem;"
+             class="input input-bordered w-full text-sm placeholder:text-slate-400 focus:border-teal-400 focus:outline-none h-10 rounded-xl border-slate-200" />
+    </div>
+    <div class="relative min-w-[190px]">
+      <select x-model="area"
+              style="color:#1e293b; background:#fff;"
+              class="select select-bordered w-full text-sm focus:border-teal-400 focus:outline-none h-10 rounded-xl border-slate-200">
+        <option value="all">All research areas</option>
+        @foreach (var a in areas)
+        {
+          <option value="@a">@a</option>
+        }
+      </select>
+    </div>
+    <div class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-500 whitespace-nowrap">
+      <i class="fas fa-layer-group text-teal-500"></i>
+      <span id="result-count" class="font-bold text-slate-700">@Model.Count()</span> proposal(s)
+    </div>
+  </div>
+</div>
+
+<div id="no-results" style="display:none">
+  <div class="alert alert-info shadow-sm">
+    <i class="fas fa-search"></i><span>No proposals match your search. Try a different keyword or area.</span>
+  </div>
+</div>
+
+@if (!Model.Any())
+{
+  <div class="alert alert-warning shadow-sm">
+    <i class="fas fa-exclamation-triangle"></i>
+    <span>
+      No available proposals match your expertise areas.
+      <a asp-action="ManageExpertise" class="font-semibold underline">Update your expertise</a> to see more proposals.
+    </span>
+  </div>
+}
+else
+{
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    @foreach (var proposal in Model)
+    {
+        <div class="bg-white rounded-2xl border border-slate-200 hover:shadow-md transition-all hover:-translate-y-0.5 overflow-hidden flex flex-col"
+             data-proposal
+             data-title="@proposal.Title"
+             data-stack="@proposal.TechnicalStack"
+             data-area="@proposal.ResearchAreaName">
+          <div class="flex items-center justify-between px-5 pt-4 pb-3 border-b border-slate-100 bg-slate-50">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-50 text-teal-700 border border-teal-200">@proposal.ResearchAreaName</span>
+            <span class="text-xs text-gray-400">@proposal.SubmittedAt.ToString("dd MMM yyyy")</span>
+          </div>
+          <div class="px-5 py-4 flex-1 min-w-0">
+            <h3 class="font-bold text-slate-900 mb-2 truncate" title="@proposal.Title">@proposal.Title</h3>
+            <p class="text-sm text-slate-600 mb-3 break-words line-clamp-3">
+              @proposal.Abstract.Substring(0, Math.Min(300, proposal.Abstract.Length))@(proposal.Abstract.Length > 300 ? "…" : "")
+            </p>
+            <p class="text-xs text-slate-500 truncate" title="@proposal.TechnicalStack">
+              <i class="fas fa-code text-teal-400 mr-1"></i><strong>Stack:</strong> @proposal.TechnicalStack
+            </p>
+          </div>
+          <div class="px-5 pb-4 mt-auto">
+            <a asp-action="ProposalDetail" asp-route-id="@proposal.ProposalId"
+               class="btn btn-sm bg-teal-500 hover:bg-teal-600 text-white border-none w-full shadow-sm gap-2">
+              <i class="fas fa-eye"></i>View Proposal
+            </a>
+          </div>
+      </div>
+    }
+  </div>
+}
+

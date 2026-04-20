@@ -1,0 +1,108 @@
+﻿@model ConfirmMatchViewModel
+@{
+    ViewData["Title"] = "Confirm Match";
+}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-lg">
+    <div class="card bg-white shadow-md border-0">
+      <div class="card-body p-0">
+        <div class="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-teal-900 px-6 py-4 rounded-t-2xl" style="color:#ffffff">
+          <i class="fas fa-handshake text-[#00A8A8] text-lg"></i>
+          <h2 class="text-lg font-bold">Confirm Match</h2>
+        </div>
+        <div class="p-6">
+          <div class="alert alert-warning shadow-sm mb-5">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Confirming this match will <strong>reveal the student's identity</strong> to you and your identity to the student. This action cannot be undone.</span>
+          </div>
+
+          <p class="text-sm font-medium text-gray-500 mb-1">Project</p>
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <p class="text-base font-bold text-[#1A2E4A]">@Model.ProposalTitle</p>
+            <button type="button" onclick="document.getElementById('proposalModal').showModal()"
+               class="btn btn-sm btn-outline border-teal-400 text-teal-700 hover:bg-teal-50 gap-1 whitespace-nowrap">
+              <i class="fas fa-eye"></i>View Proposal
+            </button>
+          </div>
+
+          <form asp-action="ConfirmMatch" method="post" class="space-y-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ProposalId" />
+            <input type="hidden" asp-for="ProposalTitle" />
+
+            <div class="form-control">
+              <label class="label"><span class="label-text font-semibold text-[#1A2E4A]">Note to Student <span class="font-normal text-gray-400">(optional)</span></span></label>
+              <textarea asp-for="Note" class="textarea textarea-bordered w-full focus:border-[#00A8A8] focus:outline-none" rows="3"
+                        placeholder="Any initial guidance or meeting request…"></textarea>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button type="submit" class="btn bg-[#00A8A8] hover:bg-[#007A7A] text-white border-none">
+                <i class="fas fa-check-circle"></i>Confirm &amp; Reveal
+              </button>
+              <a asp-action="Dashboard" class="btn btn-outline text-gray-600">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@* Proposal detail modal *@
+<dialog id="proposalModal" class="modal">
+  <div class="modal-box max-w-2xl p-0 overflow-hidden">
+    <div class="bg-gradient-to-r from-slate-900 to-teal-900 px-6 py-5" style="color:#ffffff">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-teal-400/20 text-teal-200 border border-teal-400/30 mb-3">
+            <i class="fas fa-flask mr-1.5"></i>@Model.ResearchAreaName
+          </span>
+          <h3 class="text-lg font-bold break-all" style="color:#ffffff">@Model.ProposalTitle</h3>
+        </div>
+        <span class="text-xs text-slate-400 whitespace-nowrap mt-1">@Model.SubmittedAt.ToString("dd MMM yyyy")</span>
+      </div>
+    </div>
+
+    <div class="p-6 space-y-5">
+      <div class="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <i class="fas fa-eye-slash text-blue-500 mt-0.5"></i>
+        <div>
+          <p class="text-sm font-semibold text-blue-800">Anonymous mode active</p>
+          <p class="text-xs text-blue-600 mt-0.5">Student identity hidden. Revealed only after you confirm match.</p>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Abstract</h4>
+        <p class="text-sm text-slate-700 leading-relaxed break-all">@Model.Abstract</p>
+      </div>
+
+      <div>
+        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2">Technical Stack</h4>
+        <div class="flex flex-wrap gap-2">
+          @foreach (var tech in Model.TechnicalStack.Split(',', StringSplitOptions.RemoveEmptyEntries))
+          {
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 break-all">
+              <i class="fas fa-code text-teal-500 text-[10px]"></i>@tech.Trim()
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="px-6 pb-6">
+      <form method="dialog">
+        <button class="btn btn-outline border-slate-300 text-slate-600 hover:bg-slate-100 gap-2">
+          <i class="fas fa-times"></i>Close
+        </button>
+      </form>
+    </div>
+  </div>
+  <form method="dialog" class="modal-backdrop"><button>close</button></form>
+</dialog>
+
+
+
+
