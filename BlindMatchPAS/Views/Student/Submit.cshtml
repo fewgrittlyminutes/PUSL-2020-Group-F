@@ -1,0 +1,72 @@
+﻿@model SubmitProposalViewModel
+@{
+    ViewData["Title"] = "Submit Project Proposal";
+    var isEdit = ViewBag.ProposalId != null;
+}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-2xl">
+    <div class="card bg-white shadow-md border-0">
+      <div class="card-body p-0">
+        <div class="flex items-center gap-3 bg-gradient-to-r from-slate-900 to-teal-900 px-6 py-4 rounded-t-2xl" style="color:#ffffff">
+          <i class="fas @(isEdit ? "fa-edit" : "fa-plus-circle") text-[#00A8A8] text-lg"></i>
+          <h2 class="text-lg font-bold">@(isEdit ? "Edit Proposal" : "Submit New Proposal")</h2>
+        </div>
+        <div class="p-6">
+          <form asp-action="@(isEdit ? "Edit" : "Submit")"
+                asp-route-id="@ViewBag.ProposalId"
+                method="post" class="space-y-4">
+            <div asp-validation-summary="ModelOnly" class="alert alert-error text-sm py-2" role="alert"></div>
+
+            <div class="form-control">
+              <label asp-for="Title" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Project Title</span></label>
+              <input asp-for="Title" class="input input-bordered w-full focus:border-[#00A8A8] focus:outline-none"
+                     placeholder="e.g. Smart Traffic Management using Computer Vision" />
+              <span asp-validation-for="Title" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <div class="form-control">
+              <label asp-for="Abstract" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Abstract</span></label>
+              <textarea asp-for="Abstract" class="textarea textarea-bordered w-full focus:border-[#00A8A8] focus:outline-none" rows="6"
+                        placeholder="Describe your project idea, objectives, and expected outcomes (min. 100 characters)…"></textarea>
+              <span asp-validation-for="Abstract" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <div class="form-control">
+              <label asp-for="TechnicalStack" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Technical Stack</span></label>
+              <input asp-for="TechnicalStack" class="input input-bordered w-full focus:border-[#00A8A8] focus:outline-none"
+                     placeholder="e.g. Python, OpenCV, TensorFlow, React" />
+              <span asp-validation-for="TechnicalStack" class="text-error text-xs mt-1 block"></span>
+              <p class="text-xs text-gray-400 mt-1">List the technologies, frameworks, and languages you plan to use.</p>
+            </div>
+
+            <div class="form-control">
+              <label asp-for="ResearchAreaId" class="label"><span class="label-text font-semibold text-[#1A2E4A]">Research Area</span></label>
+              <select asp-for="ResearchAreaId" asp-items="Model.ResearchAreas"
+                      class="select select-bordered w-full focus:border-[#00A8A8] focus:outline-none">
+                <option value="">-- Select a research area --</option>
+              </select>
+              <span asp-validation-for="ResearchAreaId" class="text-error text-xs mt-1 block"></span>
+            </div>
+
+            <div class="flex gap-3 pt-2">
+              <button type="submit" class="btn bg-[#00A8A8] hover:bg-[#007A7A] text-white border-none">
+                <i class="fas fa-paper-plane"></i>
+                @(isEdit ? "Save Changes" : "Submit Proposal")
+              </button>
+              <a asp-action="Dashboard" class="btn btn-outline text-gray-600">Cancel</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+
